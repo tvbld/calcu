@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora PWA</title>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#6200ea">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6200ea, #b388ff);
+    }
+
+    .calculator {
+      background: #fff;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .display {
+      width: 100%;
+      height: 80px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 10px;
+      text-align: right;
+      padding: 20px;
+      font-size: 2em;
+      color: #333;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 20px;
+      border: none;
+      background: #e0e0e0;
+      border-radius: 10px;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #d0d0d0;
+    }
+
+    button.operator {
+      background: #6200ea;
+      color: #fff;
+    }
+
+    button.operator:hover {
+      background: #4500a0;
+    }
+
+    button.equals {
+      background: #ff5722;
+      color: #fff;
+    }
+
+    button.equals:hover {
+      background: #e64a19;
+    }
+
+    button.clear {
+      background: #b0bec5;
+    }
+
+    button.clear:hover {
+      background: #90a4ae;
+    }
+
+    @media (max-width: 400px) {
+      .calculator {
+        padding: 15px;
+      }
+
+      button {
+        padding: 15px;
+        font-size: 1.2em;
+      }
+
+      .display {
+        font-size: 1.5em;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" class="display" id="display" readonly value="0">
+    <div class="buttons">
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button onclick="appendToDisplay('(')">(</button>
+      <button onclick="appendToDisplay(')')">)</button>
+      <button class="operator" onclick="appendToDisplay('/')">÷</button>
+      <button onclick="appendToDisplay('7')">7</button>
+      <button onclick="appendToDisplay('8')">8</button>
+      <button onclick="appendToDisplay('9')">9</button>
+      <button class="operator" onclick="appendToDisplay('*')">×</button>
+      <button onclick="appendToDisplay('4')">4</button>
+      <button onclick="appendToDisplay('5')">5</button>
+      <button onclick="appendToDisplay('6')">6</button>
+      <button class="operator" onclick="appendToDisplay('-')">-</button>
+      <button onclick="appendToDisplay('1')">1</button>
+      <button onclick="appendToDisplay('2')">2</button>
+      <button onclick="appendToDisplay('3')">3</button>
+      <button class="operator" onclick="appendToDisplay('+')">+</button>
+      <button onclick="appendToDisplay('0')">0</button>
+      <button onclick="appendToDisplay('.')">.</button>
+      <button class="equals" onclick="calculate()">=</button>
+      <button class="operator" onclick="backspace()">←</button>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+
+    function appendToDisplay(value) {
+      if (display.value === '0' && value !== '.') {
+        display.value = value;
+      } else {
+        display.value += value;
+      }
+    }
+
+    function clearDisplay() {
+      display.value = '0';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+      if (display.value === '') {
+        display.value = '0';
+      }
+    }
+
+    function calculate() {
+      try {
+        display.value = eval(display.value);
+      } catch (error) {
+        display.value = 'Error';
+        setTimeout(clearDisplay, 1000);
+      }
+    }
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registrado'))
+          .catch(err => console.log('Error al registrar Service Worker:', err));
+      });
+    }
+  </script>
+</body>
+</html>
